@@ -1,0 +1,26 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# OS files
+.DS_Store
+
+# Virtual environment created by uv
+.venv/
+
+# database
+*.db
+
+# logs
+logs/
+
+# data
+data/
+
+# uv build cache (optional)
+.uv/
+
+# Common editor folders
+.vscode/
+.idea/

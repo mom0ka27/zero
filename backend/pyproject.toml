@@ -1,0 +1,19 @@
+[project]
+name = "backend"
+version = "1.0.0"
+description = "the backend of Zero Anime"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "bcrypt>=4.3.0",
+    "fastapi>=0.115.12",
+    "httpx>=0.28.1",
+    "loguru>=0.7.3",
+    "lxml>=5.4.0",
+    "natsort>=8.4.0",
+    "pydantic-settings>=2.9.1",
+    "python-jose[cryptography]>=3.5.0",
+    "sqlmodel>=0.0.24",
+    "typer>=0.16.0",
+    "uvicorn>=0.34.3",
+]

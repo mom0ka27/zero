@@ -1,0 +1,35 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*'  # 通过 git tag 触发发布
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download Artifact from Build Workflow
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: build.yml
+          repo: ${{ github.repository }}  # 同一仓库
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          path: artifacts/
+      
+      - name: Rename
+        run: mv artifacts/ios-ipa/zero.ipa artifacts/zero-${{ github.ref_name }}.ipa
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/zero-${{ github.ref_name }}.ipa
+          name: Release ${{ github.ref_name }}
+          tag_name: ${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'

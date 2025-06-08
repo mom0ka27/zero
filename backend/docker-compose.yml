@@ -1,0 +1,7 @@
+services:
+  web:
+    network_mode: "host"
+    build: .
+    volumes:
+      - ./data:/app/data
+      - ./main.db:/app/main.db
