@@ -14,7 +14,7 @@ class TaskPage extends StatelessWidget {
     return Scaffold(
       body: Obx(
         () =>
-            animeController.taskList.length == 0
+            animeController.taskList.isEmpty
                 ? Center(
                   child: Text(
                     "这里什么都没有呢",

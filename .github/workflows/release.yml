@@ -25,10 +25,15 @@ jobs:
       - name: Rename
         run: mv artifacts/ios-ipa/zero.ipa artifacts/zero-${{ github.ref_name }}.ipa
 
+      - name: Backend
+        run: zip -r server-${{ github.ref_name }}.zip backend
+
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          files: artifacts/zero-${{ github.ref_name }}.ipa
+          files: |
+            artifacts/zero-${{ github.ref_name }}.ipa
+            server-${{ github.ref_name }}.zip
           name: Release ${{ github.ref_name }}
           tag_name: ${{ github.ref_name }}
         env:

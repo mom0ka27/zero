@@ -2,12 +2,8 @@ import 'package:zero/model/anime.dart';
 import 'package:zero/model/resource.dart';
 
 class ZeroMapper {
-  static RemoteAnime toRemoteAnime(Map<String, dynamic> json) {
-    return RemoteAnime(
-      id: json['id'],
-      title: json['title'],
-      image: json['image'],
-    );
+  static Anime toAnime(Map<String, dynamic> json) {
+    return Anime(id: json['id'], title: json['title'], image: json['image']);
   }
 
   static AnimeResource toAnimeResource(Map<String, dynamic> json) {

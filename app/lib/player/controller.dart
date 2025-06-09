@@ -92,6 +92,7 @@ class IndexPlayerController {
   ///
   /// 视频加载后立即返回，不会等待弹幕加载
   Future<void> setVideo(models.Video video, {Duration? start}) async {
+    this.video.value = video;
     await _player.open(
       Media(
         video.uri.toString(),

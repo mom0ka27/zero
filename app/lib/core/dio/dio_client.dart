@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce/hive.dart';
+import 'package:http_cache_hive_store/http_cache_hive_store.dart';
 import 'package:zero/main.dart';
 import 'package:zero/view/pages/login_page.dart';
 
@@ -104,13 +106,24 @@ class DioClient {
       ),
     );
 
-  static final Dio _bangumi = Dio(
-    BaseOptions(
-      baseUrl: 'https://api.bgm.tv',
-      connectTimeout: Duration(seconds: 10),
-      receiveTimeout: Duration(seconds: 10),
-    ),
-  )..interceptors.add(InterceptorsWrapper(onError: errorHandler));
+  static final Dio _bangumi =
+      Dio(
+          BaseOptions(
+            baseUrl: 'https://api.bgm.tv',
+            connectTimeout: Duration(seconds: 10),
+            receiveTimeout: Duration(seconds: 10),
+          ),
+        )
+        ..interceptors.add(InterceptorsWrapper(onError: errorHandler))
+        ..interceptors.add(
+          DioCacheInterceptor(
+            options: CacheOptions(
+              store: HiveCacheStore(null),
+              policy: CachePolicy.forceCache, // 优先网络请求，无网络时读缓存
+              priority: CachePriority.high,
+            ),
+          ),
+        );
 
   static Dio get zeroClient => _zero;
   static Dio get bgmClient => _bangumi;

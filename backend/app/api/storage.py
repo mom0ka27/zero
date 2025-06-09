@@ -6,7 +6,7 @@ import httpx
 from loguru import logger
 
 from app.config import settings
-from app.db import SqlDep, Anime, PermissionGroup
+from app.db import Episode, SqlDep, Anime, PermissionGroup
 
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import RedirectResponse
@@ -142,3 +142,24 @@ def task(user: UserDep, sql: SqlDep):
             }
         )
     return result
+
+
+@router.get("/list")
+def anime_list(_: UserDep, sql: SqlDep):
+    animes = sql.exec(select(Anime)).all()
+    return list(map(lambda a: {"id": a.id, "title": a.title, "image": a.image}, animes))
+
+
+@router.get("/episode")
+def get_episode_path(user: UserDep, sql: SqlDep, anime_id: int, index: int):
+    ep = sql.exec(
+        select(Episode).where((Episode.anime_id == anime_id) & (Episode.index == index))
+    ).first()
+    if ep == None:
+        raise HTTPException(status_code=404)
+    return ep.file
+
+
+@router.post("/episode")
+def set_episode_path(user: UserDep, sql: SqlDep, anime_id: int, index: int, file: str):
+    logger.info(f"{user.username} 修改了 {anime_id} 第 {index} 集的路径: {file}")

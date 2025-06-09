@@ -1,16 +1,20 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce/hive.dart';
 import 'package:zero/main.dart';
 import 'package:zero/model/anime.dart';
+import 'package:zero/model/episode.dart';
 import 'package:zero/player/controller.dart';
 import 'package:zero/player/model/video.dart';
 import 'package:zero/player/player.dart';
 
 class PlayerPage extends StatefulWidget {
-  final RemoteAnime anime;
-  const PlayerPage({super.key, required this.anime});
+  final Anime anime;
+
+  final List<Episode> episodes;
+
+  const PlayerPage({super.key, required this.anime, required this.episodes});
 
   @override
   State<PlayerPage> createState() => _PlayerPageState();
@@ -26,6 +30,9 @@ class _PlayerPageState extends State<PlayerPage> {
   @override
   void initState() {
     super.initState();
+
+    Future(() async {});
+
     currentIndex.listen((i) async {
       final position =
           Hive.box(
@@ -38,7 +45,7 @@ class _PlayerPageState extends State<PlayerPage> {
               "${dio.options.baseUrl}/storage/video?id=${widget.anime.id}&index=$currentIndex",
           subtitleUri:
               "${dio.options.baseUrl}/storage/subtitle?id=${widget.anime.id}&index=$currentIndex",
-          title: widget.anime.episodes[currentIndex.value].title,
+          title: widget.episodes[currentIndex.value].title,
           httpHeaders: {"Authorization": "Bearer $accessToken"},
         ),
         start: Duration(milliseconds: position),
@@ -49,7 +56,7 @@ class _PlayerPageState extends State<PlayerPage> {
         Hive.box(
           "history",
         ).put("${widget.anime.id}.${currentIndex.value}.position", 0);
-        if (currentIndex.value < widget.anime.episodes.length - 1) {
+        if (currentIndex.value < widget.episodes.length - 1) {
           currentIndex.value = currentIndex.value + 1;
         }
       }
@@ -109,57 +116,59 @@ class _PlayerPageState extends State<PlayerPage> {
                                   ),
                                 ),
                                 SizedBox(height: 15),
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    children:
-                                        widget.anime.episodes
-                                            .map(
-                                              (ep) => GestureDetector(
-                                                onTap: () {
-                                                  Hive.box("history").put(
-                                                    "${widget.anime.id}.${currentIndex.value}.position",
-                                                    controller
-                                                        .state
-                                                        .position
-                                                        .inMilliseconds,
-                                                  );
-                                                  currentIndex.value =
-                                                      ep.index - 1;
-                                                },
-                                                child: Card(
-                                                  child: Container(
-                                                    width: 150,
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                          horizontal: 15,
-                                                          vertical: 10,
-                                                        ),
-                                                    child: Text(
-                                                      "第 ${ep.index} 话\n${ep.title}",
-                                                      maxLines: 2,
+                                Obx(
+                                  () => SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      children:
+                                          widget.episodes
+                                              .map(
+                                                (ep) => GestureDetector(
+                                                  onTap: () {
+                                                    Hive.box("history").put(
+                                                      "${widget.anime.id}.${currentIndex.value}.position",
+                                                      controller
+                                                          .state
+                                                          .position
+                                                          .inMilliseconds,
+                                                    );
+                                                    currentIndex.value =
+                                                        ep.index - 1;
+                                                  },
+                                                  child: Card(
+                                                    child: Container(
+                                                      width: 150,
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                            horizontal: 15,
+                                                            vertical: 10,
+                                                          ),
+                                                      child: Text(
+                                                        "第 ${ep.index} 话\n${ep.title}",
+                                                        maxLines: 2,
 
-                                                      style: TextStyle(
-                                                        overflow:
-                                                            TextOverflow
-                                                                .ellipsis,
-                                                        color:
-                                                            ep.index - 1 ==
-                                                                    currentIndex
-                                                                        .value
-                                                                ? Theme.of(
-                                                                      context,
-                                                                    )
-                                                                    .colorScheme
-                                                                    .primary
-                                                                : null,
+                                                        style: TextStyle(
+                                                          overflow:
+                                                              TextOverflow
+                                                                  .ellipsis,
+                                                          color:
+                                                              ep.index - 1 ==
+                                                                      currentIndex
+                                                                          .value
+                                                                  ? Theme.of(
+                                                                        context,
+                                                                      )
+                                                                      .colorScheme
+                                                                      .primary
+                                                                  : null,
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                            )
-                                            .toList(),
+                                              )
+                                              .toList(),
+                                    ),
                                   ),
                                 ),
                               ],

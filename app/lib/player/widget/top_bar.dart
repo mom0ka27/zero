@@ -3,16 +3,11 @@ import 'package:get/get.dart';
 
 import '../controller.dart';
 
-class TopBar extends StatefulWidget {
+class TopBar extends StatelessWidget {
   final IndexPlayerController controller;
 
   const TopBar({super.key, required this.controller});
 
-  @override
-  State<TopBar> createState() => _TopBarState();
-}
-
-class _TopBarState extends State<TopBar> {
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -28,7 +23,7 @@ class _TopBarState extends State<TopBar> {
         SizedBox(width: 10),
         Obx(
           () => Text(
-            widget.controller.video.value?.title ?? "",
+            controller.video.value?.title ?? "",
             style: TextStyle(color: Colors.white),
           ),
         ),

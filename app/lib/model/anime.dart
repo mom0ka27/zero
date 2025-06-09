@@ -1,17 +1,9 @@
-import 'package:zero/model/episode.dart';
-
 class Anime {
   final int id;
   final String title;
   final String image;
 
   const Anime({required this.id, required this.title, required this.image});
-}
-
-class RemoteAnime extends Anime {
-  late final List<Episode> episodes;
-
-  RemoteAnime({required super.id, required super.title, required super.image});
 }
 
 class AnimeDetailed extends Anime {

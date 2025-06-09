@@ -34,8 +34,10 @@ class User(SQLModel, table=True):
             raise HTTPException(status_code=403)
 
 
-def gen_uuid():
-    return uuid.uuid4().hex
+class Episode(SQLModel, table=True):
+    anime_id: int = Field(primary_key=True, foreign_key="anime.id")
+    index: int = Field()
+    file: str = Field()
 
 
 engine = create_engine(settings.DB_URL)

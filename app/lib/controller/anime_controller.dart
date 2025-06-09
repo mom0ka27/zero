@@ -9,7 +9,7 @@ class AnimeController extends GetxController {
 
   AnimeController({required this.bgmService, required this.zeroService});
 
-  final remoteAnimeList = <RemoteAnime>[].obs;
+  final remoteAnimeList = <Anime>[].obs;
   final listLoading = false.obs;
 
   final searchResults = <AnimeDetailed>[].obs;

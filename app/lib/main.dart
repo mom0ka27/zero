@@ -3,7 +3,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce/hive.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:zero/binding/app_binding.dart';
@@ -16,7 +17,7 @@ import 'package:zero/view/pages/task_page.dart';
 
 late Directory appDocDir;
 
-final isLogin = true.obs;
+final isLogin = false.obs;
 String accessToken = "";
 
 void main() async {
@@ -27,6 +28,7 @@ void main() async {
   MediaKit.ensureInitialized();
 
   await Hive.initFlutter();
+
   await Hive.openBox("history");
   await Hive.openBox("setting");
 
@@ -71,6 +73,7 @@ class _AppState extends State<App> {
   void initState() {
     super.initState();
     Future(() async {
+      print(DioClient.zeroClient.options.baseUrl);
       if ((await DioClient.zeroClient.get("/user/info")).statusCode == 200) {
         isLogin.value = true;
       } else {

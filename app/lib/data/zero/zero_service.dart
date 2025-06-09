@@ -1,7 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:get/get.dart';
-import 'package:zero/data/bgm/bgm_mapper.dart';
-import 'package:zero/data/bgm/bgm_service.dart';
 import 'package:zero/data/zero/zero_mapper.dart';
 import 'package:zero/model/anime.dart';
 import 'package:zero/model/resource.dart';
@@ -11,18 +8,12 @@ class ZeroService {
 
   ZeroService(this.dio);
 
-  Future<List<RemoteAnime>> fetchRemoteAnimeList() async {
-    final resp = await dio.get("/anime/list");
-    BgmService bgmService = Get.find();
+  Future<List<Anime>> fetchRemoteAnimeList() async {
+    final resp = await dio.get("/storage/list");
 
     return await Future.wait(
       (resp.data["data"] as List).map((ra) async {
-        final a = ZeroMapper.toRemoteAnime(ra);
-        a.episodes =
-            (await bgmService.getEpisodeList(a.id))
-                .where((ep) => ep["type"] == 0)
-                .map((ep) => BgmMapper.toEpisode(ep))
-                .toList();
+        final a = ZeroMapper.toAnime(ra);
         return a;
       }),
     );

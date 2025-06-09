@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 import json
 from loguru import logger
 
-from app.api import anime, source, storage, user
+from app.api import source, storage, user
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, Response
@@ -12,7 +12,7 @@ import traceback
 
 VERSION = "1.0.0"
 
-logger.add("logs/latest.log", rotation="500 MB")
+logger.add("logs/latest.log", rotation="10 MB")
 
 
 @asynccontextmanager
@@ -24,7 +24,6 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-app.include_router(anime.router)
 app.include_router(source.router)
 app.include_router(storage.router)
 app.include_router(user.router)
