@@ -25,8 +25,15 @@ jobs:
           chmod +x ./scripts/build_ios.sh
           ./scripts/build_ios.sh
 
+      - name: Build APK
+        run: |
+          chmod +x ./scripts/build_android.sh
+          ./scripts/build_android.sh
+
       - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
           name: ios-ipa
-          path: app/build/dist/zero.ipa
+          path: |
+            app/build/dist/zero.ipa
+            app/build/dist/zero.apk
