@@ -20,15 +20,18 @@ jobs:
       - name: Install dependencies
         run: cd app && flutter pub get
 
-      - name: Build IPA
-        run: |
-          chmod +x ./scripts/build_ios.sh
-          ./scripts/build_ios.sh
+      - name: Accept Android SDK licenses
+        run: yes | sdkmanager --licenses
 
       - name: Build APK
         run: |
           chmod +x ./scripts/build_android.sh
           ./scripts/build_android.sh
+
+      - name: Build IPA
+        run: |
+          chmod +x ./scripts/build_ios.sh
+          ./scripts/build_ios.sh
 
       - name: Upload IPA
         uses: actions/upload-artifact@v4
