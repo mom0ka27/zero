@@ -93,7 +93,8 @@ def video(user: UserDep, id: int, index: int):
             )
         )
         return RedirectResponse(f"{settings.VIDEO_URL}/{id}/{target}/{l[index]}")
-    except:
+    except Exception as e:
+        logger.error(f"找不到视频 {id}[{index}]: {e}")
         raise HTTPException(status_code=404)
 
 

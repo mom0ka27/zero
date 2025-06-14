@@ -1,7 +1,8 @@
 services:
   web:
-    network_mode: "host"
+    restart: always
+    network_mode: host
     build: .
     volumes:
-      - ./data:/app/data
+      - ./data:/app/data  # 前面的是宿主机挂载数据的目录
       - ./main.db:/app/main.db
