@@ -1,5 +1,5 @@
 PODS:
-  - auto_orientation (0.0.1):
+  - auto_orientation_v2 (2.3.6):
     - Flutter
   - Flutter (1.0.0)
   - media_kit_libs_ios_video (1.0.4):
@@ -20,7 +20,7 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
-  - auto_orientation (from `.symlinks/plugins/auto_orientation/ios`)
+  - auto_orientation_v2 (from `.symlinks/plugins/auto_orientation_v2/ios`)
   - Flutter (from `Flutter`)
   - media_kit_libs_ios_video (from `.symlinks/plugins/media_kit_libs_ios_video/ios`)
   - media_kit_video (from `.symlinks/plugins/media_kit_video/ios`)
@@ -31,8 +31,8 @@ DEPENDENCIES:
   - wakelock_plus (from `.symlinks/plugins/wakelock_plus/ios`)
 
 EXTERNAL SOURCES:
-  auto_orientation:
-    :path: ".symlinks/plugins/auto_orientation/ios"
+  auto_orientation_v2:
+    :path: ".symlinks/plugins/auto_orientation_v2/ios"
   Flutter:
     :path: Flutter
   media_kit_libs_ios_video:
@@ -51,7 +51,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/wakelock_plus/ios"
 
 SPEC CHECKSUMS:
-  auto_orientation: a1600c9ed72e6e96982fb4e1214463343342432a
+  auto_orientation_v2: f74c2808e5ef369ad291f3b79c1345888b511e16
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   media_kit_libs_ios_video: 5a18affdb97d1f5d466dc79988b13eff6c5e2854
   media_kit_video: 1746e198cb697d1ffb734b1d05ec429d1fcd1474
