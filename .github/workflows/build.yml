@@ -5,9 +5,36 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  build-ipa:
     runs-on: macos-latest
 
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: cd app && flutter pub get
+
+      - name: Build IPA
+        run: |
+          chmod +x ./scripts/build_ios.sh
+          ./scripts/build_ios.sh
+      
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-ipa
+          path: |
+            app/build/dist/zero.ipa
+
+  build-apk:
+    runs-on: ubuntu-latest
+    name: Build APK
     steps:
       - uses: actions/checkout@v4
 
@@ -27,16 +54,11 @@ jobs:
         run: |
           chmod +x ./scripts/build_android.sh
           ./scripts/build_android.sh
+          steps:
 
-      - name: Build IPA
-        run: |
-          chmod +x ./scripts/build_ios.sh
-          ./scripts/build_ios.sh
-
-      - name: Upload IPA
+      - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ios-ipa
+          name: android-apk
           path: |
-            app/build/dist/zero.ipa
             app/build/dist/zero.apk
