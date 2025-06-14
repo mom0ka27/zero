@@ -88,7 +88,7 @@ class DmhySource(Source):
 class AnimeGardenSource(Source):
     async def search(self, keyword: str):
         resp = await client.post(
-            f"https://api.animes.garden/resources?type=合集&tracker=true",
+            f"https://api.animes.garden/resources?tracker=true",
             json={
                 "search": [
                     keyword,
