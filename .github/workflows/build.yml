@@ -21,7 +21,7 @@ jobs:
         run: cd app && flutter pub get
 
       - name: Accept Android SDK licenses
-        run: yes | sdkmanager --licenses
+        run: yes | flutter doctor --android-licenses
 
       - name: Build APK
         run: |
