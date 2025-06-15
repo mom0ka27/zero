@@ -22,8 +22,11 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           path: artifacts/
       
-      - name: Rename
+      - name: Rename IPA
         run: mv artifacts/ios-ipa/zero.ipa artifacts/zero-${{ github.ref_name }}.ipa
+
+      - name: Rename APK
+        run: mv artifacts/android-apk/zero.apk artifacts/zero-${{ github.ref_name }}.apk
 
       - name: Backend
         run: zip -r server-${{ github.ref_name }}.zip backend
@@ -33,6 +36,7 @@ jobs:
         with:
           files: |
             artifacts/zero-${{ github.ref_name }}.ipa
+            artifacts/zero-${{ github.ref_name }}.apk
             server-${{ github.ref_name }}.zip
           name: Release ${{ github.ref_name }}
           tag_name: ${{ github.ref_name }}
