@@ -15,7 +15,7 @@ class Anime(SQLModel, table=True):
     title: str = Field()
     image: str = Field()
 
-    bt_hash: str = Field(nullable=True)
+    bt_hash: str | None = Field(nullable=True)
 
 
 class PermissionGroup(IntEnum):

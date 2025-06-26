@@ -63,7 +63,6 @@ def download(user: UserDep, magnet: str, id: int, title: str, image: str, sql: S
         return {"code": -3, "message": "无效的 magnet"}
 
     path = f"{os.path.abspath(settings.DATA_FOLDER)}/{id}"
-
     os.makedirs(path, exist_ok=True)
 
     r = httpx.post(
@@ -94,7 +93,7 @@ def video(user: UserDep, id: int, index: int):
         )[
             0
         ]  # 防止 .DS_Store 等
-        if os.path.isfile(target):
+        if os.path.isfile(f"{settings.DATA_FOLDER}/{id}/{target}"):
             return RedirectResponse(f"{settings.VIDEO_URL}/{id}/{target}")
         l = natsort.natsorted(
             filter(
@@ -174,3 +173,12 @@ def get_episode_path(user: UserDep, sql: SqlDep, anime_id: int, index: int):
 @router.post("/episode")
 def set_episode_path(user: UserDep, sql: SqlDep, anime_id: int, index: int, file: str):
     logger.info(f"{user.username} 修改了 {anime_id} 第 {index} 集的路径: {file}")
+
+
+@router.post("/anime")
+def add_anime(user: UserDep, id: int, title: str, image: str, sql: SqlDep):
+    user.assert_permission(PermissionGroup.ADMIN)
+    sql.add(Anime(id=id, title=title, image=image, bt_hash=None))
+    sql.commit()
+    path = f"{os.path.abspath(settings.DATA_FOLDER)}/{id}"
+    os.makedirs(path, exist_ok=True)

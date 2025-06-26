@@ -20,4 +20,8 @@ class ResourceController extends GetxController {
   Future<void> addTask(AnimeDetailed anime, AnimeResource resource) async {
     await zeroService.addTask(anime.id, anime.title, anime.image, resource.url);
   }
+
+  Future<void> addAnime(AnimeDetailed anime) async {
+    await zeroService.addAnime(anime.id, anime.title, anime.image);
+  }
 }

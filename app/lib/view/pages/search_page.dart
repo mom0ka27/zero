@@ -28,9 +28,9 @@ class _SearchPageState extends State<SearchPage>
     with AutomaticKeepAliveClientMixin {
   final AnimeController animeController = Get.find();
   RxBool showDetail = false.obs;
+  AnimeDetailed? currentAnime;
 
   Map<int, ColorScheme> colorSchemeCache = {};
-  Rx<Widget> widgetCache = Rx(SizedBox());
 
   @override
   void initState() {
@@ -43,6 +43,7 @@ class _SearchPageState extends State<SearchPage>
             return;
           }
           colorSchemeCache[a.id] = await ColorScheme.fromImageProvider(
+            // ignore: use_build_context_synchronously
             brightness: Theme.brightnessOf(context),
             provider: CachedNetworkImageProvider(a.image),
           );
@@ -92,10 +93,7 @@ class _SearchPageState extends State<SearchPage>
                               if (!colorSchemeCache.containsKey(a.id)) {
                                 return;
                               }
-                              widgetCache.value = DetailPanel(
-                                a,
-                                colorScheme: colorSchemeCache[a.id]!,
-                              );
+                              currentAnime = a;
                               showDetail.value = true;
                             },
                           ),
@@ -141,10 +139,16 @@ class _SearchPageState extends State<SearchPage>
               curve: Curves.fastOutSlowIn,
               onEnd: () {
                 if (!showDetail.value) {
-                  widgetCache.value = SizedBox();
+                  currentAnime = null;
                 }
               },
-              child: widgetCache.value,
+              child:
+                  currentAnime != null
+                      ? DetailPanel(
+                        currentAnime!,
+                        colorScheme: colorSchemeCache[currentAnime!.id]!,
+                      )
+                      : SizedBox(),
             ),
           ),
         ],
@@ -165,237 +169,236 @@ class DetailPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Theme(
       data: ThemeData(colorScheme: colorScheme, useMaterial3: true),
-      child: Builder(
-        builder:
-            (context) => Container(
-              width: width,
-              clipBehavior: Clip.antiAlias,
-              decoration: BoxDecoration(
-                color: Theme.of(context).canvasColor,
-                borderRadius: BorderRadius.horizontal(
-                  left: Radius.circular(20),
+      child: Container(
+        width: width,
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          color: Theme.of(context).canvasColor,
+          borderRadius: BorderRadius.horizontal(left: Radius.circular(20)),
+        ),
+        child: Stack(
+          children: [
+            NetworkImg(anime.image, height: blurHeight, width: width),
+            ClipRect(
+              child: SizedBox(
+                height: blurHeight,
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                  child: Container(
+                    color: Colors.transparent,
+                    height: blurHeight,
+                    width: width,
+                  ),
                 ),
               ),
-              child: Stack(
-                children: [
-                  NetworkImg(anime.image, height: blurHeight, width: width),
-                  ClipRect(
-                    child: SizedBox(
-                      height: blurHeight,
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                        child: Container(
-                          color: Colors.transparent,
-                          height: blurHeight,
-                          width: width,
-                        ),
-                      ),
-                    ),
-                  ),
+            ),
 
-                  Container(
-                    height: blurHeight,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          Theme.of(context).canvasColor,
-                        ],
-                      ),
-                    ),
-                  ),
-                  SingleChildScrollView(
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 60, left: 15),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
+            Container(
+              height: blurHeight,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.transparent, Theme.of(context).canvasColor],
+                ),
+              ),
+            ),
+            SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.only(top: 60, left: 15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                          child: NetworkImg(
+                            anime.image,
+                            height: 300,
+                            width: 210,
+                          ),
+                        ),
+                        SizedBox(width: 20),
+                        SizedBox(
+                          width: width - 250,
+                          height: 300,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20),
-                                ),
-                                child: NetworkImg(
-                                  anime.image,
-                                  height: 300,
-                                  width: 210,
+                              SizedBox(height: 10),
+
+                              Text(
+                                anime.title,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w900,
                                 ),
                               ),
-                              SizedBox(width: 20),
-                              SizedBox(
-                                width: width - 250,
-                                height: 300,
-                                child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        SizedBox(height: 10),
-
-                                        Text(
-                                          anime.title,
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w900,
-                                          ),
-                                        ),
-                                        SizedBox(height: 10),
-                                        Row(
-                                          children: [
-                                            Container(
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal: 12,
-                                                vertical: 3,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                  color: Colors.white54,
-                                                  width: 1.2,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                              ),
-                                              child: Text(
-                                                anime.date,
-                                                style: TextStyle(
-                                                  color:
-                                                      Theme.of(
-                                                        context,
-                                                      ).colorScheme.onImage,
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(width: 14),
-                                            Text(
-                                              "全 ${anime.eps} 话",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color:
-                                                    Theme.of(
-                                                      context,
-                                                    ).colorScheme.onImage,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(height: 30),
-                                        RatingCard(
-                                          rating: anime.rating,
-                                          rank: anime.rank,
-                                          count: anime.count,
+                              SizedBox(height: 10),
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 3,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: Colors.white54,
+                                        width: 1.2,
+                                      ),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Text(
+                                      anime.date,
+                                      style: TextStyle(
+                                        color:
+                                            Theme.of(
+                                              context,
+                                            ).colorScheme.onImage,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 14),
+                                  Text(
+                                    "全 ${anime.eps} 话",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color:
+                                          Theme.of(context).colorScheme.onImage,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 30),
+                              RatingCard(
+                                rating: anime.rating,
+                                rank: anime.rank,
+                                count: anime.count,
+                              ),
+                              Spacer(),
+                              FilledButton.icon(
+                                onPressed: () async {
+                                  if (!check()) return;
+                                  ResourceController resourceController =
+                                      Get.find();
+                                  await resourceController.addAnime(anime);
+                                  Get.dialog(
+                                    AlertDialog(
+                                      title: Text("成功"),
+                                      content: Text(
+                                        "已成功添加番剧\nBangumi ID: ${anime.id}",
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Get.back();
+                                          },
+                                          child: Text("关闭"),
                                         ),
                                       ],
                                     ),
-
-                                    FilledButton.icon(
-                                      onPressed: () async {
-                                        AnimeController animeController =
-                                            Get.find();
-                                        if (animeController.remoteAnimeList.any(
-                                          (a) => a.id == anime.id,
-                                        )) {
-                                          Get.dialog(
-                                            AlertDialog(
-                                              title: Text("出错了"),
-                                              content: Text(
-                                                "你已经下过这部番了哦\n目前版本不支持为一部番剧添加多个数据源",
-                                              ),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Get.back();
-                                                  },
-                                                  child: Text("关闭"),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                          return;
-                                        }
-                                        String? keyword = await showDialog(
-                                          context: context,
-                                          builder: (c) {
-                                            String text = anime.title;
-                                            return AlertDialog(
-                                              title: Text("搜索关键词"),
-                                              content: TextField(
-                                                controller:
-                                                    TextEditingController(
-                                                      text: anime.title,
-                                                    ),
-                                                onChanged: (t) => text = t,
-                                              ),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: Text("取消"),
-                                                ),
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Navigator.pop(
-                                                      context,
-                                                      text,
-                                                    );
-                                                  },
-                                                  child: Text("确认"),
-                                                ),
-                                              ],
-                                            );
-                                          },
-                                        );
-                                        if (keyword == null) {
-                                          return;
-                                        }
-                                        ResourceController c = Get.find();
-                                        c.fetchResource(keyword);
-                                        Get.to(
-                                          () => ResourcePage(anime: anime),
-                                        );
-                                      },
-                                      label: Text(
-                                        "下载",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
+                                  );
+                                },
+                                icon: Icon(Icons.add),
+                                label: Text("添加"),
+                              ),
+                              SizedBox(height: 10),
+                              FilledButton.icon(
+                                onPressed: () async {
+                                  if (!check()) return;
+                                  String? keyword = await showDialog(
+                                    context: context,
+                                    builder: (c) {
+                                      String text = anime.title;
+                                      return AlertDialog(
+                                        title: Text("搜索关键词"),
+                                        content: TextField(
+                                          controller: TextEditingController(
+                                            text: anime.title,
+                                          ),
+                                          onChanged: (t) => text = t,
                                         ),
-                                      ),
-                                      icon: Icon(Icons.download),
-                                    ),
-                                  ],
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text("取消"),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context, text);
+                                            },
+                                            child: Text("确认"),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                  if (keyword == null) {
+                                    return;
+                                  }
+                                  ResourceController c = Get.find();
+                                  c.fetchResource(keyword);
+                                  Get.to(() => ResourcePage(anime: anime));
+                                },
+                                label: Text(
+                                  "下载",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
+                                icon: Icon(Icons.download),
                               ),
                             ],
                           ),
-                          SizedBox(height: 20),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
 
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 4),
-                            child: Text(
-                              anime.summary,
-                              style: TextStyle(fontWeight: FontWeight.w600),
-                            ),
-                          ),
-                          SizedBox(height: 10),
-                          TagsWrap(anime.tags),
-                          SizedBox(height: 60),
-                        ],
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 4),
+                      child: Text(
+                        anime.summary,
+                        style: TextStyle(fontWeight: FontWeight.w600),
                       ),
                     ),
-                  ),
-                ],
+                    SizedBox(height: 10),
+                    TagsWrap(anime.tags),
+                    SizedBox(height: 60),
+                  ],
+                ),
               ),
             ),
+          ],
+        ),
       ),
     );
+  }
+
+  bool check() {
+    AnimeController animeController = Get.find();
+    if (animeController.remoteAnimeList.any((a) => a.id == anime.id)) {
+      Get.dialog(
+        AlertDialog(
+          title: Text("出错了"),
+          content: Text("你已经下过这部番了哦\n目前版本不支持为一部番剧添加多个数据源"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: Text("关闭"),
+            ),
+          ],
+        ),
+      );
+      return false;
+    }
+    return true;
   }
 }

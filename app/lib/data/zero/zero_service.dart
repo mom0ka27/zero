@@ -38,6 +38,13 @@ class ZeroService {
     );
   }
 
+  Future<void> addAnime(int id, String title, String image) async {
+    await dio.post(
+      "/storage/anime",
+      queryParameters: {"id": id.toString(), "title": title, "image": image},
+    );
+  }
+
   Future<List<AnimeTask>> fetchTaskList() async {
     final resp = await dio.get("/storage/task");
     return (resp.data["data"] as List)

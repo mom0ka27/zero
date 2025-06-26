@@ -115,6 +115,7 @@ class _LoginPageState extends State<LoginPage> {
               if (resp.data["code"] == 200) {
                 final token = resp.data["data"]["access_token"];
                 Hive.box("setting").put("access_token", token);
+                accessToken = Hive.box("setting").get("access_token");
                 dio.options.baseUrl = server!;
                 Get.back();
                 isLogin.value = true;

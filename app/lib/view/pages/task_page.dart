@@ -22,6 +22,7 @@ class TaskPage extends StatelessWidget {
                   ),
                 )
                 : ListView.builder(
+                  padding: EdgeInsets.all(10),
                   itemCount: animeController.taskList.length,
                   itemBuilder: (c, i) {
                     final task = animeController.taskList[i];
