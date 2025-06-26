@@ -1,5 +1,5 @@
 services:
-  web:
+  core:
     restart: always
     network_mode: host
     build: .

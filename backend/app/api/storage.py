@@ -1,3 +1,4 @@
+from genericpath import isfile
 import os
 import re
 import base64
@@ -85,7 +86,16 @@ def download(user: UserDep, magnet: str, id: int, title: str, image: str, sql: S
 def video(user: UserDep, id: int, index: int):
     logger.info(f"用户 {user.username} 播放了 {id} 第 {index} 集")
     try:
-        target = os.listdir(f"{settings.DATA_FOLDER}/{id}")[0]
+        target = list(
+            filter(
+                lambda f: not f.startswith("."),
+                os.listdir(f"{settings.DATA_FOLDER}/{id}"),
+            )
+        )[
+            0
+        ]  # 防止 .DS_Store 等
+        if os.path.isfile(target):
+            return RedirectResponse(f"{settings.VIDEO_URL}/{id}/{target}")
         l = natsort.natsorted(
             filter(
                 lambda f: isVideo(f),

@@ -5,9 +5,9 @@ cd app
 rm -rf build/ios/Payload
 
 mkdir -p build/dist
-mkdir -p build/ios/Payload
+mkdir -p build/ios/Payqload
 
-flutter build ios --release -v --no-codesign
+flutter build ios --release --no-codesign
 
 cp -r build/ios/iphoneos/Runner.app build/ios/Payload
 
